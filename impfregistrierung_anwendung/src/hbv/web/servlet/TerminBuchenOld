@@ -1,0 +1,105 @@
+package hbv.web.servlet;
+
+import hbv.web.db.BuchungVerwalten;
+import hbv.web.db.UserVerwalten;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.*;
+
+public class TerminBuchen extends HttpServlet {
+
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+
+    response.setContentType("application/json");
+    PrintWriter out = response.getWriter();
+
+    HttpSession session = request.getSession(false);
+    if (session == null || session.getAttribute("user") == null) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      out.print("{\"error\": \"Nicht eingeloggt!\"}");
+      return;
+    }
+
+    String email = (String) session.getAttribute("user");
+    String datum = request.getParameter("datum");
+    String zeit = request.getParameter("zeit");
+    String impfstoffIdString = request.getParameter("impfstoff_id");
+    String impfzentrum = request.getParameter("impfzentrum");
+
+    if (datum == null || zeit == null || impfstoffIdString == null || impfzentrum == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      out.print("{\"error\": \"Fehlende Parameter!\"}");
+      return;
+    }
+
+    int impfstoffId;
+    try {
+      impfstoffId = Integer.parseInt(impfstoffIdString);
+    } catch (NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      out.print("{\"error\": \"Ungültige Impfstoff-ID!\"}");
+      return;
+    }
+
+    try {
+      UserVerwalten userVerwalten = UserVerwalten.getInstance();
+      BuchungVerwalten buchungVerwalten = BuchungVerwalten.getInstance();
+
+      //      String impfzentrum = request.getParameter("impfzentrum");
+      int userId = userVerwalten.getUserIdByEmail(email);
+      int slotId = buchungVerwalten.getSlotId(datum, zeit, impfzentrum);
+
+      String jsonResponse =
+          "{"
+              + "\"user_id\": "
+              + userId
+              + ","
+              + "\"slot_id\": "
+              + slotId
+              + ","
+              + "\"impfstoff_id\": "
+              + impfstoffId
+              + ",";
+
+      if (userId == -1) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        out.print("{\"error\": \"Benutzer nicht gefunden!\"}");
+        return;
+      }
+
+      if (slotId == -1) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        out.print("{\"error\": \"Kein passender Zeitslot gefunden!\"}");
+        return;
+      }
+
+      boolean buchungErfolgreich = buchungVerwalten.buchungHinzufuegen(userId, slotId, impfstoffId);
+      if (buchungErfolgreich) {
+
+
+        out.print(
+            "{ \"success\": \"TESTTermin erfolgreich gebucht!\", "
+                + "\"datum\": \""
+                + datum
+                + "\", "
+                + "\"zeit\": \""
+                + zeit
+                + "\", "
+                + "\"impfstoff\": \""
+                + impfstoffId
+                + "\", "
+                + "\"impfzentrum\": \""
+                + impfzentrum
+                + "\" }");
+
+      } else {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        out.print("{\"error\": \"Fehler beim Speichern der Buchung!\"}");
+      }
+    } catch (Exception e) {
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      out.print("{\"error\": \"Datenbankfehler!\", \"details\": \"" + e.getMessage() + "\"}");
+    }
+  }
+}

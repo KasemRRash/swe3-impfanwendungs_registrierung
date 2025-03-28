@@ -1,0 +1,32 @@
+package hbv.web.db;
+
+import hbv.web.model.Impfstoff;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import javax.naming.*;
+import javax.sql.DataSource;
+
+public class ImpfstoffVerwalten {
+
+    private static DataSource getDataSource() throws NamingException {
+        Context initCtx = new InitialContext();
+        return (DataSource) initCtx.lookup("java:/comp/env/jdbc/mariadb");
+    }
+
+    public static List<Impfstoff> getAlleImpfstoffe() {
+        List<Impfstoff> impfstoffe = new ArrayList<>();
+        try (Connection conn = getDataSource().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT id, name FROM impfstoff")) {
+
+            while (rs.next()) {
+                impfstoffe.add(new Impfstoff(rs.getInt("id"), rs.getString("name")));
+            }
+        } catch (SQLException | NamingException e) {
+            e.printStackTrace();
+        }
+        return impfstoffe;
+    }
+}
+

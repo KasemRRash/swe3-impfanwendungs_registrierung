@@ -1,0 +1,10 @@
+user=kasrashrash
+webapp=docker-kasrashrash-java
+manager=docker-kasrashrash-manager
+dbserver=mysql-server
+dbuser=kasrashrash
+dbname=kasrashrash_db
+dbpassword=IBeZTvMU42kI6a2TqZ91
+redisserver=localhost
+redispassword=IBeZTvMU42kI6a2TqZ91
+baseurl=https://informatik.hs-bremerhaven.de

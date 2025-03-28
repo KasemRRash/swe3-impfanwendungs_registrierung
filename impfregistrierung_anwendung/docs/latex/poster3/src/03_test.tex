@@ -1,0 +1,104 @@
+\section*{Testfälle}
+
+\FloatBarrier % Verhindert, dass die Tabelle verschoben wird
+
+\begin{table}[H] % Nutze H statt h!
+    \centering
+   % \tiny
+    \scriptsize
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|p{3cm}|p{7.9cm}|p{6.7cm}|}
+        \hline
+        \textbf{Testfall} & \textbf{Eingabe} & \textbf{Erwartetes Ergebnis} \\ \hline
+
+        Registrierung (erfolgreich) &
+        \parbox{6cm}{
+          \texttt{curl -X POST -d} \\
+          \texttt{"email=testuser@example.com\&} \\
+          \texttt{password=123\&} \\
+          \texttt{passwordConfirm=123"} \\
+          \texttt{\$path/register}
+        } &
+        \texttt{"message": "Registrierung erfolgreich!", Status: success} \\ \hline
+
+        Registrierung (Fehlgeschlagen) &
+        \parbox{6cm}{
+          \texttt{curl -X POST -d} \\
+          \texttt{"email=testuser@example.com\&} \\
+          \texttt{password=123"} \\
+          \texttt{\$path/register}
+        } &
+        \texttt{"message": "E-Mail bereits registriert.", status: error} \\ \hline
+
+        Login (erfolgreich) &
+        \parbox{6cm}{
+          \texttt{curl -X POST -c cookie -b cookie -d} \\
+          \texttt{"email=testuser@example.com\&} \\
+          \texttt{password=123"} \\
+          \texttt{\$path/UserAnmelden}
+        } &
+        \texttt{"redirect": "termine", "message": "Login erfolgreich", status: success} \\ \hline
+
+        Session prüfen &
+        \parbox{6cm}{
+          \texttt{curl -b cookie \$path/SessionPruefen}
+        } &
+        Session gültig – JSON mit Benutzerdaten oder Status \\ \hline
+
+        Freie Slots anzeigen &
+        \parbox{6cm}{
+          \texttt{curl -X POST -b cookie \$path/FreieSlotsAnzeigen}
+        } &
+        Liste der verfügbaren Slots im JSON-Format \\ \hline
+
+        Impfstoffe abrufen &
+        \parbox{6cm}{
+          \texttt{curl -b cookie} \\
+          \texttt{"\$path/ImpfstoffAnzeigen?} \\
+          \texttt{impfzentren=Nemerb-Nord"} \\
+        } &
+        Liste der Impfstoffe als JSON \\ \hline
+
+        Termin buchen &
+        \parbox{6cm}{
+          \texttt{curl -X POST -b cookie -d} \\
+          \texttt{"datum=2025-03-20\&zeit=08:30\&} \\
+          \texttt{impfstoff\_id=1\&} \\
+          \texttt{impfzentrum=Nemerb-Nord"} \\
+          \texttt{\$path/TerminBuchen}
+        } &
+        \texttt{"message": "Termin erfolgreich gebucht", status : success} \\ \hline
+
+        Buchungen anzeigen &
+        \parbox{6cm}{
+          \texttt{curl -b cookie \$path/BuchungAnzeigen}
+        } &
+        JSON mit allen Buchungen des Nutzers \\ \hline
+
+        Termin stornieren &
+        \parbox{6cm}{
+          \texttt{curl -X POST -b cookie -d} \\
+          \texttt{"buchung\_id=1"} \\
+          \texttt{\$path/TerminStornieren}
+        } &
+        \texttt{"message": "Buchung erfolgreich gelöscht", status: success} \\ \hline
+
+        Logout &
+        \parbox{6cm}{
+          \texttt{curl -X POST -b cookie \$path/UserAbmelden}
+        } &
+        \texttt{"message": "Abmeldung erfolgreich", status: success} \\ \hline
+
+        Zugriff nach Logout &
+        \parbox{6cm}{
+          \texttt{curl -b cookie \$path/SessionPruefen}
+        } &
+        \texttt{"message": "Keine aktive Session", status: error} \\ \hline
+
+    \end{tabular}
+    \caption{Testfälle für die Impfregistrierungsanwendung}
+    \label{tab:testfaelle}
+\end{table}
+
+\FloatBarrier % Sicherstellen, dass nichts weiter nach unten rutscht
+
