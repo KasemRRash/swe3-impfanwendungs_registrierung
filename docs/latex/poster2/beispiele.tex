@@ -1,0 +1,36 @@
+% Beispiel Zitat
+~\autocite[postnote]{kürzel}
+
+% Beispiel für Bildintegration
+\includegraphics[width=\linewidth]{src/abbildungen/fsm}
+\captionof{figure}{Bildunterschrift ~\autocite[postnote]{kürzel}}
+
+% Beispiel für eine Tabelle
+\begin{longtblr}[caption={\LaTeX~Schriftgrößen}, label={schriftgrößen} ]{colspec = {X[l,m] X[2,c,m]}, rowhead=1, width=0.2\textwidth}\toprule
+	Befehl                      & Ergebnis                    \\ \midrule
+	\textbackslash tiny         & \tiny{winzig}               \\ \cmidrule{1-2}
+	\textbackslash scriptsize   & \scriptsize{klein}          \\ \cmidrule{1-2}
+	\textbackslash footnotesize & \footnotesize{etwas größer} \\ \cmidrule{1-2}
+	\textbackslash small        & \small{noch etwas größer}   \\ \cmidrule{1-2}
+	\textbackslash normalsize   & \normalsize{normal}         \\ \cmidrule{1-2}
+	\textbackslash large        & \large{groß}                \\ \cmidrule{1-2}
+	\textbackslash Large        & \Large{größer}              \\ \cmidrule{1-2}
+	\textbackslash LARGE        & \LARGE{noch größer}         \\ \cmidrule{1-2}
+	\textbackslash huge         & \huge{riesig}               \\ \cmidrule{1-2}
+	\textbackslash Huge         & \LARGE{noch riesiger}       \\ \bottomrule
+\end{longtblr}
+
+% Beispiel für ein Listing
+\begin{code}{Ein Listing}{einlisting}
+	\begin{minted}{bash}
+	for i in {1..10}; do 
+		echo "$i"
+	done	
+	\end{minted}
+\end{code}
+
+% Beispiel für eine Aufzählung 
+\begin{itemize}
+	\item erstes Stichwort
+	\item zweites Stichwort
+\end{itemize}

@@ -1,0 +1,83 @@
+\section*{DevOps}
+
+\textbf{Wie wird das System versioniert & bereitgestellt?}
+
+Unser System wird mithilfe von Git versioniert. Änderungen im Quellcode werden zentral über Git verwaltet, und bei jedem Push auf das Repository erfolgt eine automatische Ausführung von Skripten zur Bereitstellung. Wir verwenden hauptsächlich einen einzigen Branch (main). Neue Änderungen werden dort gesammelt.
+In unserem System verwenden wir auch Git-Hooks. Das bedeutet, dass nach jeder Änderung automatisch geprüft wird, 
+ob der Code Fehler enthält und verschiedene Prozesse gestartet werden. 
+Die Integration des CI/CD-Prozesses erfolgt mittels Git post-receive-Hook. Bei einem Push auf den main-Branch lädt er zunächst die Konfigurationsdatei und startet anschließend den automatischen Build mit dem Skript build.sh. Danach erfolgt ein automatisierter Login-Vorgang mittels einer HTTP-Anfrage (curl) an unsere Anwendung. Somit realisiert der post-receive einen kontinuierlichen Deployment-Prozess.
+Was die Lizenz angeht, wurde die \textbf{MIT-Lizenz} gewählt, weil sie eine Open-Source-Lizenz ist. Außerdem ist sie einfach und flexibil, da sie sehr liberal ist und anderen Entwicklern erlaubt, den Code leicht weiterzuverwenden und anzupassen.
+
+\textbf{Post-receive Hook}
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+
+configfile="/home/$USER/repos/swe3-2024-03/local/config.txt"
+
+while read oldrev newrev refname
+do
+  ...
+
+  branch=$(echo "$refname" | sed 's|^refs/heads/||')
+  if [ "$branch" = "main" ]; then
+    echo "Starte Deployment für main..."
+
+  if test "$configfile" != ""; then
+    source "$configfile"
+  fi
+
+   cd ~/repos/swe3-2024-03/ || exit 1
+   bin/build.sh
+  fi
+done
+
+exit 0
+\end{lstlisting}
+
+\textbf{Pre-receive Hook}
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+
+while read oldrev newrev refname
+do
+ ... 
+
+ find "$tmpdir" -name '*.java' \
+       | xargs -r -n 1000 google-java-format --set-exit-if-changed
+  formatter_status=$?
+  if [ $formatter_status -ne 0 ]; then
+    echo "Fehler: google-java-formatter."
+    exit 1
+
+find "$tmpdir" -name '*.java' \
+     | xargs -r -n 1000 checkstyle -c ~/repos/swe3-2024-03/misc/checkstyle.xml
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Checkstyle Fehlermeldung"
+  rm -rf "$tmpdir"
+  exit 1
+fi
+  rm -rf "$tmpdir"
+
+done
+
+exit 0
+\end{lstlisting}
+
+\textbf{Commit-msg}
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+REGEX='^(ADD|DELETE|CHANGE)\s*\|\s*[^|]+\s*\|\s*.*$'
+
+if [[ ! "$COMMIT_MSG" =~ $REGEX ]]; then
+    echo "ERROR: Format nicht eingehalten!"
+    echo "AUFGABE(ADD,DELETE,CHANGE) | DATEINAME | NACHRICHT"
+    exit 1
+fi
+
+exit 0
+\end{lstlisting}
