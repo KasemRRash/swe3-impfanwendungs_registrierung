@@ -20,7 +20,7 @@
 
   <context-param>
   <param-name>redispassword</param-name>
-  <param-value>IBeZTvMU42kI6a2TqZ91</param-value>
+  <param-value>redispassword</param-value>
 </context-param>
 <context-param>
   <param-name>redisserver</param-name>
