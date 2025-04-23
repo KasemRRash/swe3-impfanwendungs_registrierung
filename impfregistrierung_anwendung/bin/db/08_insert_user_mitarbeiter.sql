@@ -1,1 +1,0 @@
-INSERT INTO user (email, password, istMitarbeiter) VALUES ('mitarbeiter@test.com', 'a460fe9d94976a3348661d0f8b469acf56b741b74c57bb2ee052f76cee613996967cd76ff0efdb8f762dacd9b3995a4023b6b2c92648043a2609170539c8f32e973168f3522080fe', true);
