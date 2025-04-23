@@ -7,8 +7,8 @@
                 maxActive="20"
                 initialSize="10"
                 removeAbandoned="true"
-                username="kasrashrash"
-                password="IBeZTvMU42kI6a2TqZ91"
+                username="kasem"
+                password="passworddeklaieren"
                 driverClassName="org.mariadb.jdbc.Driver"
-                url="jdbc:mariadb://mysql-server:3306/kasrashrash_db" />
+                url="jdbc:mariadb://mysql-server:3306/kasem_db" />
 </Context>
