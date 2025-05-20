@@ -1,8 +1,9 @@
-Projekt IRA (Impfregistrierungsanwendung)
-
 # Projekt IRA von [TEAM-03]
 
 Dieses Projekt ist Open-Source und steht unter der [MIT License](LICENSE.txt).
+
+![image](https://github.com/user-attachments/assets/244996f3-5b81-4737-9ce4-a0e0888e2618)
+
 
 Folgende Bibliotheken werden verwendet:
 
